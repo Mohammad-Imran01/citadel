@@ -3,6 +3,9 @@
 #include <string>
 #include <list>
 #include <set>
+#include <utility>
+#include <memory>
+#include <algorithm>
 #include <unordered_set>
 #include <unordered_map>
 
@@ -80,6 +83,8 @@ namespace Im
         }
         return maxSize;
     }
+
+    // two unqiue indices num whose sum is given target.
     vector<int> twoSum(vector<int> arr, int target)
     {
         unordered_map<int, int> mp;
@@ -90,6 +95,42 @@ namespace Im
                 return {ind, mp[key]};
         }
         return {-1, -1};
+    }
+
+    // all unique combo of nums whose sum is 0
+    vector<vector<int>> threeSum(vector<int> nums)
+    {
+        vector<vector<int>> res;
+        const int len = nums.size();
+
+        sort(nums.begin(), nums.end());
+
+        for (int i = 0; i < len - 2; ++i)
+        {
+            if (i > 0 && i < len && nums[i] == nums[i - 1])
+                continue;
+            int j = i + 1, k = len - 1;
+
+            while (k > j)
+            {
+                const int key = nums[i] + nums[j] + nums[k];
+                if (key == 0)
+                {
+                    res.push_back({nums[i], nums[j], nums[k]});
+                    ++j, --k;
+                    while (j < k && nums[j] == nums[j - 1])
+                        ++j;
+                    while (k > j && nums[k] == nums[k + 1])
+                        --k;
+                }
+                else if (key > 0)
+                    --k;
+                else
+                    ++j;
+            }
+        }
+
+        return res;
     }
 }
 
