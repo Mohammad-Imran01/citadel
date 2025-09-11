@@ -261,6 +261,19 @@ namespace Im
 
         return res;
     }
+
+    int maxSubarray(vector<int> nums)
+    {
+        int maxi = -1e8;
+
+        int curr = -1e8;
+        for (int i = 0; i < nums.size(); ++i)
+        {
+            curr = max(nums[i], curr + nums[i]);
+            maxi = max(maxi, curr);
+        }
+        return maxi;
+    }
 }
 
 int main()
