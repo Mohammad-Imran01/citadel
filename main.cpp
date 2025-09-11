@@ -20,7 +20,7 @@ namespace Im
             cout << item << " ";
         cout << "\n";
     } // begining
-  
+
     class LRUCache
     {
         int maxSize;
@@ -167,6 +167,43 @@ namespace Im
             }
         }
     }
+
+    // max area to store water | trapping rainwater
+    int maxArea(vector<int> heights)
+    {
+        int maxSize = 0;
+        for (int i = 0, j = heights.size() - 1; i <= j;)
+        {
+            int ht = min(heights[i], heights[j]);
+            int wd = j - i;
+            maxSize = max(maxSize, wd * ht);
+            if (heights[i] < heights[j])
+                ++i;
+            else
+                --j;
+        }
+
+        return maxSize;
+    }
+
+    int minInRotatedSortedArray(vector<int> nums)
+    {
+        if (nums.empty())
+            return;
+        int mini = 1e9;
+
+        for (int left = 0, right = nums.size() - 1; left <= right;)
+        {
+            int mid = left + (right-left)/2;
+            if(nums[mid] > nums[right]) {
+                left=mid+1;
+            } else {
+                right = mid;
+            }
+        }
+        return -1;
+    }
+
 }
 
 int main()
