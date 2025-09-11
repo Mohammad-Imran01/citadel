@@ -381,6 +381,50 @@ namespace Im
         }
         return temp->next;
     }
+    Node *reverseList(Node *root, Node *end = nullptr)
+    {
+        Node *prev = nullptr;
+        while (root != end)
+        {
+            Node *t = root->next;
+            root->next = prev;
+            prev = root;
+            root = t;
+        }
+        return prev;
+    }
+    Node *revKSize(Node *root, int k)
+    {
+        if (!root || !root->next || k <= 1)
+            return root;
+        vector<Node *> temp;
+        while (root)
+        {
+            temp.push_back(root);
+            root = root->next;
+        }
+        for (int i = 0; i + k <= temp.size(); i += k)
+            reverse(temp.begin() + i, temp.begin() + i + k);
+
+        for (int i = 1; i < temp.size(); ++i)
+            temp[i - 1]->next = temp[i];
+        temp.back()->next = nullptr;
+        return temp.front();
+        // Node dummy(0, root);
+        // Node *temp = &dummy;
+
+        // while (true)
+        // {
+        //     Node *p = &dummy, *packEnd = &dummy;
+
+        //      for (int i = 0; i < k; ++i)
+        //     packEnd = packEnd->next;
+        //     Node* newGroupEnd = packEnd;
+
+        //     Node* newGroup
+
+        // }
+    }
 } // linked list
 int main()
 {
