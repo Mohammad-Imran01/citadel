@@ -322,6 +322,65 @@ namespace Im
         }
         return false; // will never reach
     }
+    Node *mergeTwoLists(Node *list1, Node *list2)
+    {
+        Node *temp = new Node;
+        Node *curr = temp;
+        while (list1 || list2)
+        {
+            if (!list1)
+            {
+                curr->next = list2;
+                list2 = list2->next;
+            }
+            else if (!list2)
+            {
+                curr->next = list1;
+                list1 = list1->next;
+            }
+            else
+            {
+                if (list1->val < list2->val)
+                {
+                    curr->next = list1;
+                    list1 = list1->next;
+                }
+                else
+                {
+                    curr->next = list2;
+                    list2 = list2->next;
+                }
+            }
+            curr = curr->next;
+        }
+        return temp->next;
+    }
+    Node *addTwoNumbers(Node *l1, Node *l2)
+    {
+        Node *temp = new Node;
+        Node *curr = temp;
+
+        int carry = 0;
+        while (l1 || l2 || carry)
+        {
+            if (l1)
+            {
+                carry += l1->val;
+                l1 = l1->next;
+            }
+            if (l2)
+            {
+                carry += l2->val;
+                l2 = l2->next;
+            }
+            Node *t = new Node(carry % 10);
+            carry /= 10;
+            curr->next = t;
+            t = nullptr;
+            curr = curr->next;
+        }
+        return temp->next;
+    }
 } // linked list
 int main()
 {
