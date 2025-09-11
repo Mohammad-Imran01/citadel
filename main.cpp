@@ -20,6 +20,7 @@ namespace Im
             cout << item << " ";
         cout << "\n";
     } // begining
+  
     class LRUCache
     {
         int maxSize;
@@ -132,9 +133,44 @@ namespace Im
 
         return res;
     }
+
+    vector<vector<int>> fourSum(vector<int> nums, int target)
+    {
+        vector<vector<int>> res;
+        const int len = nums.size();
+        for (int i = 0; i < len - 3; ++i)
+        {
+            if (i > 0 && nums[i] == nums[i - 1])
+                continue;
+            for (int j = i + 1; j < len - 2; ++j)
+            {
+                if (j > i + 1 && nums[j] == nums[j - 1])
+                    continue;
+                int k = j + 1, l = len - 1;
+                while (k < l)
+                {
+                    int key = nums[i] + nums[j] + nums[k] + nums[l];
+                    if (key == target)
+                    {
+                        res.push_back({nums[i], nums[j], nums[k], nums[l]});
+                        ++k, --l;
+                        while (k < l && nums[k] == nums[k - 1])
+                            ++k;
+                        while (l > k && nums[l] == nums[l - 1])
+                            ++l;
+                    }
+                    else if (key < target)
+                        ++k;
+                    else
+                        --l;
+                }
+            }
+        }
+    }
 }
 
 int main()
 {
     Im::print<string>({"Hello,", "World!"});
+    cout << "substr withotrep char: " << Im::longestSubstringWithoutRepChar("Hello");
 }
