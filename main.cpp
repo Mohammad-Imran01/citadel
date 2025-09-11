@@ -41,7 +41,7 @@ namespace Im
             cache[key].second = usage.begin();
         }
 
-        int insert(int key, int val)
+        void insert(int key, int val)
         {
             if (cache.count(key))
             {
@@ -167,6 +167,7 @@ namespace Im
                 }
             }
         }
+        return res;
     }
 
     // max area to store water | trapping rainwater
@@ -190,7 +191,7 @@ namespace Im
     int minInRotatedSortedArray(vector<int> nums)
     {
         if (nums.empty())
-            return;
+            return -1;
         int mini = 1e9;
 
         for (int left = 0, right = nums.size() - 1; left <= right;)
@@ -274,8 +275,54 @@ namespace Im
         }
         return maxi;
     }
-}
+    vector<vector<string>> groupAnagram(vector<string> words)
+    {
+        if (words.empty())
+            return {};
+        unordered_map<string, vector<string>> mp;
+        vector<vector<string>> res;
 
+        for (const auto &word : words)
+        {
+            string s = word;
+            sort(s.begin(), s.end());
+            mp[s].push_back(word);
+        }
+
+        for (auto &[_, group] : mp)
+            res.push_back(group);
+
+        return res;
+    }
+} // array / strings
+namespace Im
+{
+    struct Node
+    {
+        int val;
+        Node *next = nullptr;
+
+        Node(int val_ = 0, Node *next_ = nullptr)
+            : val(val_), next(next_) {}
+    };
+    bool findCycle(Node *root)
+    {
+        Node *temp = new Node(0, root);
+        Node *fast = temp, *slow = temp;
+
+        while (true)
+        {
+            slow = slow->next;
+            if (!fast->next || !fast->next->next)
+                return false;
+            fast = fast->next->next;
+
+            if (fast == slow)
+                return true;
+        }
+        return false; // will never reach
+    }
+} // linked list
 int main()
 {
     Im::print<string>({"Hello,", "World!"});
