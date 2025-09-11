@@ -6,6 +6,7 @@
 #include <utility>
 #include <memory>
 #include <algorithm>
+#include <functional>
 #include <unordered_set>
 #include <unordered_map>
 
@@ -194,16 +195,72 @@ namespace Im
 
         for (int left = 0, right = nums.size() - 1; left <= right;)
         {
-            int mid = left + (right-left)/2;
-            if(nums[mid] > nums[right]) {
-                left=mid+1;
-            } else {
+            int mid = left + (right - left) / 2;
+            if (nums[mid] > nums[right])
+            {
+                left = mid + 1;
+            }
+            else
+            {
                 right = mid;
             }
         }
         return -1;
     }
 
+    string longestPalindrom(string word)
+    {
+        int beg{}, count{1};
+
+        auto solve = [&](int left, int right)
+        {
+            while (left >= 0 && right < word.size() && word[left] == word[right])
+            {
+                if (right - left + 1 > count)
+                {
+                    count = right - left + 1;
+                    beg = left;
+                }
+                --left, ++right;
+            }
+        };
+
+        for (int i = 0; i < word.size(); ++i)
+        {
+            solve(i, i);
+            solve(i, i + 1);
+        }
+
+        return word.substr(beg, count);
+    }
+
+    vector<vector<int>> mergeIntervals(vector<vector<int>> &vals)
+    {
+        if (vals.size() < 2)
+            return vals;
+
+        sort(vals.begin(), vals.end());
+
+        vector<vector<int>> res{vals[0]};
+
+        int i = 1;
+
+        while (i < vals.size())
+        {
+            if (res.size() && res.back()[1] >= vals[i][0])
+            {
+                res.back()[1] = max(vals[i][1], res.back()[1]);
+                res.back()[0] = min(res.back()[0], vals[i][0]);
+            }
+            else
+            {
+                res.push_back(vals[i]);
+            }
+            ++i;
+        }
+
+        return res;
+    }
 }
 
 int main()
