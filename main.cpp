@@ -302,15 +302,20 @@ namespace Im
         int val;
         Node *next = nullptr;
         Node *rand = nullptr;
+        Node *child = nullptr; // for multi level DLL
+        Node *prev = nullptr;  // for DLL
 
-        Node(int val_ = 0, Node *next_ = nullptr, Node *_rand = nullptr)
-            : val(val_), next(next_), rand(_rand) {}
+        Node(int val_ = 0, Node *next_ = nullptr, Node *prev_ = nullptr, Node *_rand = nullptr, Node *child_ = nullptr)
+            : val(val_), next(next_), prev(prev_), rand(_rand), child(child_) {}
         ~Node()
         {
             delete next;
             delete rand;
+            delete child;
+            delete prev;
 
-            next = rand = nullptr;
+            child = nullptr;
+            next = rand = prev = nullptr;
         }
     };
 
@@ -490,8 +495,90 @@ namespace Im
                 copy->next = curr->next;
         }
         return copyDummy->next;
-    } // linked list
-}
+    }
+
+    class FlattenMultiLevelDLL
+    {
+        // DFS helper: flattens from 'head' and returns tail node
+        Node *dfs(Node *head)
+        {
+            Node *curr = head;
+            Node *last = nullptr;
+
+            while (curr)
+            {
+                Node *next = curr->next;
+                if (curr->child)
+                { // FIX: use curr, not head
+                    Node *childHead = curr->child;
+                    Node *childTail = dfs(childHead);
+
+                    // connect current node to child
+                    curr->child = nullptr;
+                    curr->next = childHead;
+                    childHead->prev = curr;
+
+                    // connect child's tail to next
+                    if (next)
+                    {
+                        childTail->next = next;
+                        next->prev = childTail;
+                    }
+                    last = childTail;
+                }
+                else
+                {
+                    last = curr;
+                }
+                curr = next;
+            }
+            return last;
+        }
+
+    public:
+        Node *flatten(Node *head)
+        {
+            if (!head)
+                return nullptr;
+            dfs(head);
+            return head;
+        }
+    };
+
+} // linked list
+
+namespace Im
+{
+    struct GraphNodeNeighbour
+    {
+        int val;
+        vector<GraphNodeNeighbour *> neighbors;
+        GraphNodeNeighbour(int __val = 0) : val(__val) {}
+    };
+    class CloneGraph
+    {
+        unordered_map<GraphNodeNeighbour *, GraphNodeNeighbour *> vis;
+        GraphNodeNeighbour *solve(GraphNodeNeighbour *real)
+        {
+            if (!real)
+                return nullptr;
+            if (vis.count(real))
+                return vis[real];
+
+            GraphNodeNeighbour *copy = new GraphNodeNeighbour(real->val);
+            vis[real] = copy;
+
+            for (GraphNodeNeighbour *neigh : real->neighbors)
+                copy->neighbors.push_back(solve(neigh));
+            return copy;
+        }
+        GraphNodeNeighbour *cloneGraph(GraphNodeNeighbour *realGraph)
+        {
+            return solve(realGraph);
+        }
+    };
+} // graph
+
 int main()
 {
     Im::print<string>({"Hello,", "World!"});
