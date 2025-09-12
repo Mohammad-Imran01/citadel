@@ -301,10 +301,19 @@ namespace Im
     {
         int val;
         Node *next = nullptr;
+        Node *rand = nullptr;
 
-        Node(int val_ = 0, Node *next_ = nullptr)
-            : val(val_), next(next_) {}
+        Node(int val_ = 0, Node *next_ = nullptr, Node *_rand = nullptr)
+            : val(val_), next(next_), rand(_rand) {}
+        ~Node()
+        {
+            delete next;
+            delete rand;
+
+            next = rand = nullptr;
+        }
     };
+
     bool findCycle(Node *root)
     {
         Node *temp = new Node(0, root);
@@ -425,7 +434,64 @@ namespace Im
 
         // }
     }
-} // linked list
+
+    Node *copyRandomList(Node *head)
+    {
+        Node *t = head;
+
+        unordered_map<Node *, Node *> mp;
+
+        Node dummy = Node(0, head);
+        dummy.next = head;
+
+        while (head)
+        {
+            mp[head] = new Node(head->val);
+            head = head->next;
+        }
+        head = dummy.next;
+
+        while (head)
+        {
+            auto &node = mp[head];
+            head = head->next;
+
+            mp[node]->next = mp[node->next];
+            mp[node]->rand = mp[node->rand];
+        }
+        return mp[head];
+    }
+    Node *copyRandomListBetter(Node *head)
+    {
+        if (!head)
+            return nullptr;
+
+        for (Node *curr = head; curr; curr = curr->next->next)
+        {
+            Node *copy = new Node(curr->val);
+            copy->next = curr->next;
+            curr->next = copy;
+        }
+        for (Node *curr = head; curr && curr->next; curr = curr->next->next)
+        {
+            if (curr->rand)
+                curr->next->rand = curr->rand->next;
+        }
+
+        Node *copyDummy = new Node(0, head->next);
+
+        for (Node *curr = head; curr && curr->next;)
+        {
+            Node *copy = curr->next;
+            curr->next = copy->next;
+
+            curr = curr->next;
+            if (curr)
+                copy->next = curr->next;
+        }
+        return copyDummy->next;
+    } // linked list
+}
 int main()
 {
     Im::print<string>({"Hello,", "World!"});
