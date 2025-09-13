@@ -9,6 +9,8 @@
 #include <functional>
 #include <unordered_set>
 #include <unordered_map>
+#include <stack>
+#include <queue>
 
 using namespace std;
 
@@ -575,6 +577,87 @@ namespace Im
         GraphNodeNeighbour *cloneGraph(GraphNodeNeighbour *realGraph)
         {
             return solve(realGraph);
+        }
+    };
+
+    class CourseSchedule
+    { // if there is any loop
+        vector<int> vis;
+        bool checkLoop(int node, const vector<vector<int>> &adj)
+        {
+            if (vis[node] == 2)
+                return false;
+            if (vis[node] == 1)
+                return true; // still exploring but came here again so: loop.
+
+            vis[node] = 1;
+            for (auto it : adj[node])
+                if (checkLoop(it, adj))
+                    return true;
+
+            vis[node] = 2;
+            return false;
+        }
+
+    public:
+        bool canFinish(int numCourses, vector<vector<int>> &prerequisites)
+        {
+            vector<vector<int>> adj(numCourses);
+
+            vis.assign(numCourses, 0);
+
+            for (const auto &course : prerequisites)
+            {
+                adj[course[0]].push_back(course[1]);
+            }
+
+            for (int i = 0; i < numCourses; ++i)
+                if (checkLoop(i, adj))
+                    return false;
+            return true;
+        }
+    };
+    class WordLadder
+    {
+    public:
+        int ladderLength(string beg, string end, vector<string> &wordList)
+        {
+            unordered_set<string> st({wordList.begin(), wordList.end()});
+            unordered_set<string> vis;
+ 
+            queue<string> q;
+            q.push(beg);
+            vis.insert(beg);
+
+            int steps = 1;
+            while (q.size())
+            {
+                int size = q.size();
+                while (size--)
+                {
+                    string curr = q.front();
+                    q.pop();
+                    if (curr == end)
+                        return steps;
+                    for (int i = 0; i < curr.size(); ++i)
+                    {
+                        char temp = curr[i];
+
+                        for (char c = 'a'; c <= 'z'; ++c)
+                        {
+                            curr[i] = c;
+                            if (st.count(curr) && !vis.count(curr))
+                            {
+                                q.push(curr);
+                                vis.insert(curr);
+                            }
+                        }
+                        curr[i] = temp;
+                    }
+                }
+                ++steps;
+            }
+            return 0;
         }
     };
 } // graph
