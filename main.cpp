@@ -11,6 +11,11 @@
 #include <unordered_map>
 #include <stack>
 #include <queue>
+#include <functional>
+#include <map>
+#include <climits>
+#include <cmath>
+
 
 using namespace std;
 
@@ -624,7 +629,7 @@ namespace Im
         {
             unordered_set<string> st({wordList.begin(), wordList.end()});
             unordered_set<string> vis;
- 
+
             queue<string> q;
             q.push(beg);
             vis.insert(beg);
@@ -658,6 +663,43 @@ namespace Im
                 ++steps;
             }
             return 0;
+        }
+    };
+
+    class CountIsland
+    {
+    public:
+        int numIslands(vector<vector<char>> &grid)
+        {
+            function<void(int, int)> turnOff;
+            turnOff = [&](int i, int j) -> void
+            {
+                if (i < 0 || i >= grid.size() || j < 0 || j >= grid[i].size() || grid[i][j] == '0')
+                    return;
+
+                grid[i][j] = '0';
+
+                turnOff(i, j + 1);
+                turnOff(i, j - 1);
+                turnOff(i + 1, j);
+                turnOff(i - 1, j);
+            };
+
+            int countIsland = 0;
+
+            for (int i = 0; i < grid.size(); ++i)
+            {
+                for (int j = 0; j < grid[i].size(); ++j)
+                {
+                    if (grid[i][j] == '1')
+                    {
+                        turnOff(i, j);
+                        ++countIsland;
+                    }
+                }
+            }
+
+            return countIsland;
         }
     };
 } // graph
